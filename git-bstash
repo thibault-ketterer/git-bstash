@@ -38,11 +38,7 @@ function bstashlist() {
 
 function bstashshow() {
     echo "[*] Show branch stashes:"
-    if which delta >/dev/null;then
-        cat "$STASH_DIR/$BRANCH.patch" | delta
-    else
-        cat "$STASH_DIR/$BRANCH.patch"
-    fi
+    cat "$STASH_DIR/$BRANCH.patch" | delta
 }
 
 function bstashdrop() {
