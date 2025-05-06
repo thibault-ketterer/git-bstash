@@ -41,3 +41,12 @@ Then source your ~/.bashrc (or open a new terminal) and use the commands \o/
 /!\ it will destroy the stash
 
     git bstash drop
+
+# add this to your fish prompt
+
+    # branch stash
+    if git bstash list
+        set_color 96F
+        echo -n "s⚑"
+        set_color normal
+    end
