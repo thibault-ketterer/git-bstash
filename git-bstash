@@ -2,8 +2,8 @@
 set -euo pipefail
 
 CMD=${1:-help}
-STASH_DIR="$(git rev-parse --git-dir)/branch-stash"
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
+STASH_DIR="$(git rev-parse --git-dir 2>/dev/null)/branch-stash"
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 PATCH_FILE="$STASH_DIR/$BRANCH.patch"
 
 mkdir -p "$STASH_DIR"
