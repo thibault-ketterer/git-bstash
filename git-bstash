@@ -1,0 +1,55 @@
+#!/bin/bash
+set -euo pipefail
+
+CMD=${1:-help}
+STASH_DIR="$(git rev-parse --git-dir)/branch-stash"
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+PATCH_FILE="$STASH_DIR/$BRANCH.patch"
+
+mkdir -p "$STASH_DIR"
+
+function bstash() {
+    echo "[*] Saving stash for branch '$BRANCH' to $PATCH_FILE"
+    git stash show -p > "$PATCH_FILE" || { echo "[!] Nothing to stash."; exit 1; }
+    git stash drop || true
+}
+
+function bstashrestore() {
+    if [ -f "$PATCH_FILE" ]; then
+        echo "[*] Applying stash for branch '$BRANCH' from $PATCH_FILE"
+        git apply "$PATCH_FILE"
+        git stash
+    else
+        echo "[!] No stash found for branch '$BRANCH'"
+        exit 1
+    fi
+}
+
+function bstashlist() {
+    echo "[*] Listing branch stashes:"
+    ls "$STASH_DIR/$BRANCH.patch" 2>/dev/null | sed 's|.*/||;s|\.patch$||' || echo "No stashes saved."
+}
+
+function bstashshow() {
+    echo "[*] Show branch stashes:"
+    if which delta >/dev/null;then
+        cat "$STASH_DIR/$BRANCH.patch" | delta
+    else
+        cat "$STASH_DIR/$BRANCH.patch"
+    fi
+}
+
+function bstashdrop() {
+    echo "[*] Show branch stashes:"
+    rm "$STASH_DIR/$BRANCH.patch"
+}
+
+case "$CMD" in
+    save|stash) bstash ;;
+    restore)    bstashrestore ;;
+    list)       bstashlist ;;
+    show)       bstashshow ;;
+    drop)       bstashdrop ;;
+    *) echo "Usage: git bstash [stash|restore|list|show|drop]"; exit 1 ;;
+esac
+
