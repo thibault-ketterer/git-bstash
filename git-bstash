@@ -26,8 +26,14 @@ function bstashrestore() {
 }
 
 function bstashlist() {
-    echo "[*] Listing branch stashes:"
-    ls "$STASH_DIR/$BRANCH.patch" 2>/dev/null | sed 's|.*/||;s|\.patch$||' || echo "No stashes saved."
+    output=$(ls "$STASH_DIR/$BRANCH.patch" 2>/dev/null | sed 's|.*/||;s|\.patch$||')
+    if [ -z "$output" ];then
+        [ -t 1 ] && echo "No stashes saved."
+        exit 1
+    else
+        [ -t 1 ] && echo "$output"
+        exit 0
+    fi
 }
 
 function bstashshow() {
