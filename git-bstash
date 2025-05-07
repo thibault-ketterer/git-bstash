@@ -10,6 +10,7 @@ mkdir -p "$STASH_DIR"
 
 function bstash() {
     echo "[*] Saving stash for branch '$BRANCH' to $PATCH_FILE"
+    git stash
     git stash show -p > "$PATCH_FILE" || { echo "[!] Nothing to stash."; exit 1; }
     git stash drop || true
 }
@@ -18,7 +19,7 @@ function bstashrestore() {
     if [ -f "$PATCH_FILE" ]; then
         echo "[*] Applying stash for branch '$BRANCH' from $PATCH_FILE"
         git apply "$PATCH_FILE"
-        git stash
+        rm -vf "$PATCH_FILE"
     else
         echo "[!] No stash found for branch '$BRANCH'"
         exit 1
